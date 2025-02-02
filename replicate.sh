@@ -30,4 +30,6 @@ BACKUP_NAME=`tar -tf $ARCHIVE_NAME | tail -n 1`
 
 tar -C /app -xvf $ARCHIVE_NAME
 
-pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --dbname $DATABASE_URL /app$BACKUP_NAME
+pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --verbose --dbname $DATABASE_URL /app$BACKUP_NAME || {
+    echo "pg_restore encountered errors (this is sometimes normal)"
+}
