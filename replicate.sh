@@ -15,6 +15,12 @@ then
   exit 1
 fi
 
+if [ -z "$SCALINGO_POSTGRESQL_URL" ]
+then
+  echo "SCALINGO_POSTGRESQL_URL is not set"
+  exit 1
+fi
+
 install-scalingo-cli
 dbclient-fetcher psql
 
