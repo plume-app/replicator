@@ -15,12 +15,18 @@ then
   exit 1
 fi
 
+if [ -z "$SCALINGO_POSTGRESQL_URL" ]
+then
+  echo "SCALINGO_POSTGRESQL_URL is not set"
+  exit 1
+fi
+
 install-scalingo-cli
 dbclient-fetcher psql
 
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
-ADDON_ID=`scalingo --app $SOURCE_APP addons | grep postgresql | awk -F '|' '{print $3}'`
+ADDON_ID=`scalingo --app $SOURCE_APP addons | grep postgresql | awk -F ' | ' '{print $4}'`
 
 ARCHIVE_NAME=backup.tar.gz
 
@@ -30,4 +36,6 @@ BACKUP_NAME=`tar -tf $ARCHIVE_NAME | tail -n 1`
 
 tar -C /app -xvf $ARCHIVE_NAME
 
-pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --dbname $DATABASE_URL /app$BACKUP_NAME
+pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --verbose --schema public --dbname $SCALINGO_POSTGRESQL_URL /app$BACKUP_NAME || {
+    echo "pg_restore encountered errors (this is sometimes normal)"
+}
