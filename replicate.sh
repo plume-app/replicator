@@ -26,7 +26,7 @@ dbclient-fetcher psql
 
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
-ADDON_ID=`scalingo --app $SOURCE_APP addons | grep postgresql | awk -F '|' '{print $3}'`
+ADDON_ID=`scalingo --app $SOURCE_APP addons | grep postgresql | awk -F ' | ' '{print $4}'`
 
 ARCHIVE_NAME=backup.tar.gz
 
