@@ -34,11 +34,11 @@ scalingo --app $SOURCE_APP --addon $ADDON_ID backups-download --output $ARCHIVE_
 
 BACKUP_NAME=`tar -tf $ARCHIVE_NAME | tail -n 1`
 
-pg_restore -l /app$BACKUP_NAME > dump.list
-grep -v -E 'ahoy|solid_queue' dump.list > dump_clean.list
-
 tar -C /app -xvf $ARCHIVE_NAME
 
-pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --verbose --schema public -L app/dump_clean.list --dbname $SCALINGO_POSTGRESQL_URL /app$BACKUP_NAME || {
+pg_restore -l /app$BACKUP_NAME > /app/dump.list
+grep -v -E 'ahoy|solid_queue' /app/dump.list > /app/dump_clean.list
+
+pg_restore --clean --if-exists --no-owner --no-privileges --no-comments --verbose --schema public -L /app/dump_clean.list --dbname $SCALINGO_POSTGRESQL_URL /app$BACKUP_NAME || {
     echo "pg_restore encountered errors (this is sometimes normal)"
 }
