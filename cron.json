@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "15 11 * * * sh /app/replicate.sh"
+      "command": "18 12 * * * sh /app/replicate.sh"
     }
   ]
 }
