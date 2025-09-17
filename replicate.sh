@@ -48,7 +48,6 @@ pg_restore --section=pre-data \
 pg_restore --section=data \
   --no-owner --no-privileges \
   --disable-triggers \
-  --jobs=1 \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
   /app$BACKUP_NAME
