@@ -1,17 +1,20 @@
 #!/bin/bash
 
+
 # Exit when any command fails
 set -e
 
-if [ -z "$SOURCE_APP" ]
-then
-  echo "SOURCE_APP is not set"
-  exit 1
-fi
 
+# Check of env vars
 if [ -z "$SCALINGO_CLI_TOKEN" ]
 then
   echo "SCALINGO_CLI_TOKEN is not set"
+  exit 1
+fi
+
+if [ -z "$SCALINGO_ORIGINAL_POSTGRESQL_URL" ]
+then
+  echo "SCALINGO_ORIGINAL_POSTGRESQL_URL is not set"
   exit 1
 fi
 
@@ -21,28 +24,37 @@ then
   exit 1
 fi
 
+
+# Install packages
 install-scalingo-cli
 dbclient-fetcher psql
 
+
+# Login to scaling cli
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
-ADDON_ID=`scalingo --app $SOURCE_APP addons | grep postgresql | awk -F ' | ' '{print $4}'`
 
-ARCHIVE_NAME=backup.tar.gz
+# Dump original database with some tables excluded
+pg_dump --clean --if-exists \
+  --format=c \
+  --verbose \
+  --dbname="${SCALINGO_ORIGINAL_POSTGRESQL_URL}" \
+  --no-owner --no-privileges --no-comments \
+  --exclude-schema 'information_schema' \
+  --exclude-schema '^pg_*' \
+  --exclude-table='public.ahoy*' \
+  --exclude-table='public.solid_queue*' \
+  --exclude-table='public.versions' \
+  --file /app/partial_dump.dump
 
-scalingo --app $SOURCE_APP --addon $ADDON_ID backups-download --output $ARCHIVE_NAME
 
-BACKUP_NAME=`tar -tf $ARCHIVE_NAME | tail -n 1`
-
-tar -C /app -xvf $ARCHIVE_NAME
-
-
+# Restore database into destination database
 pg_restore --section=pre-data \
   --clean --if-exists \
   --no-owner --no-privileges \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app$BACKUP_NAME
+  /app/partial_dump.dump
 
 
 pg_restore --section=data \
@@ -50,12 +62,11 @@ pg_restore --section=data \
   --disable-triggers \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app$BACKUP_NAME
+  /app/partial_dump.dump
 
 
 pg_restore --section=post-data \
   --no-owner --no-privileges \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app$BACKUP_NAME
-
+  /app/partial_dump.dump

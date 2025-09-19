@@ -4,7 +4,7 @@ This project allow you to restore the last Scalingo PostgreSQL backup in an anot
 
 The app need to have a PostgreSQL addon and 3 env variables set:
 - `SCALINGO_CLI_TOKEN` that you can create here https://dashboard.scalingo.com/account/tokens
-- `SOURCE_APP` the name of the app where the backup will be fetched
+- `SCALINGO_ORIGINAL_POSTGRESQL_URL` is the url of the original (production) database
 - `SCALINGO_POSTGRESQL_URL` is the url of the destination (replicated) database
 
 The `/app` folder must exist. It will be used to store the dump of the original database that will be then replicated into the destination database.
