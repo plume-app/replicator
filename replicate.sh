@@ -34,7 +34,7 @@ dbclient-fetcher psql
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 
-DUMP_NAME=./app/partial_dump.dump
+DUMP_NAME=/app/partial_dump.dump
 
 # Dump original database with some tables excluded
 pg_dump --clean --if-exists \
