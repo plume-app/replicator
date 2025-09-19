@@ -34,6 +34,8 @@ dbclient-fetcher psql
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 
+DUMP_NAME=./app/partial_dump.dump
+
 # Dump original database with some tables excluded
 pg_dump --clean --if-exists \
   --format=c \
@@ -45,7 +47,7 @@ pg_dump --clean --if-exists \
   --exclude-table='public.ahoy*' \
   --exclude-table='public.solid_queue*' \
   --exclude-table='public.versions' \
-  --file /app/partial_dump.dump
+  --file $DUMP_NAME
 
 
 # Restore database into destination database
@@ -54,7 +56,7 @@ pg_restore --section=pre-data \
   --no-owner --no-privileges \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app/partial_dump.dump
+  $DUMP_NAME
 
 
 pg_restore --section=data \
@@ -62,11 +64,11 @@ pg_restore --section=data \
   --disable-triggers \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app/partial_dump.dump
+  $DUMP_NAME
 
 
 pg_restore --section=post-data \
   --no-owner --no-privileges \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
-  /app/partial_dump.dump
+  $DUMP_NAME
