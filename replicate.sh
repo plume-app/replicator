@@ -72,3 +72,5 @@ pg_restore --section=post-data \
   --verbose \
   --dbname=$SCALINGO_POSTGRESQL_URL \
   $DUMP_NAME
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Process is complete"
