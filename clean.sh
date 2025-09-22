@@ -34,22 +34,6 @@ dbclient-fetcher psql
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 
-DUMP_NAME=/app/partial_dump.dump
-
-# Dump original database with some tables excluded
-pg_dump --clean --if-exists \
-  --format=c \
-  --verbose \
-  --dbname="${SCALINGO_ORIGINAL_POSTGRESQL_URL}" \
-  --no-owner --no-privileges --no-comments \
-  --exclude-schema 'information_schema' \
-  --exclude-schema '^pg_*' \
-  --exclude-table='public.ahoy*' \
-  --exclude-table='public.solid_queue*' \
-  --exclude-table='public.versions' \
-  --file $DUMP_NAME
-
-
 # Clean public schema of destination database
 psql "$SCALINGO_POSTGRESQL_URL_AS_PLUME" <<'EOSQL'
 DROP SCHEMA public CASCADE;
@@ -63,27 +47,5 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgresql;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO replicator;
 EOSQL
 
-# Restore database into destination database
-pg_restore --section=pre-data \
-  --clean --if-exists \
-  --no-owner --no-privileges \
-  --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
-  $DUMP_NAME
 
-
-pg_restore --section=data \
-  --no-owner --no-privileges \
-  --disable-triggers \
-  --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
-  $DUMP_NAME
-
-
-pg_restore --section=post-data \
-  --no-owner --no-privileges \
-  --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
-  $DUMP_NAME
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Process is complete"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Cleaning process is complete"
