@@ -2,7 +2,7 @@
   "jobs": [
     {
       "command": "0 1 * * * sh /app/replicate.sh",
-      "size": "XL"
+      "size": "M"
     }
   ]
 }
