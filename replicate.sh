@@ -58,7 +58,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Original databse (partially) dumped"
 
 # Clean public schema and set default privileges
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
-DROP SCHEMA public CASCADE;
+DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public;
 EOSQL
 
