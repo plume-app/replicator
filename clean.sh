@@ -18,9 +18,9 @@ then
   exit 1
 fi
 
-if [ -z "$SCALINGO_POSTGRESQL_URL" ]
+if [ -z "$SCALINGO_DESTINATION_POSTGRESQL_URL" ]
 then
-  echo "SCALINGO_POSTGRESQL_URL is not set"
+  echo "SCALINGO_DESTINATION_POSTGRESQL_URL is not set"
   exit 1
 fi
 
@@ -35,7 +35,7 @@ scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 
 # Clean public schema of destination database
-psql "$SCALINGO_POSTGRESQL_URL_AS_PLUME" <<'EOSQL'
+psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 

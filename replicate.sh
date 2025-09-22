@@ -18,9 +18,9 @@ then
   exit 1
 fi
 
-if [ -z "$SCALINGO_POSTGRESQL_URL" ]
+if [ -z "$SCALINGO_DESTINATION_POSTGRESQL_URL" ]
 then
-  echo "SCALINGO_POSTGRESQL_URL is not set"
+  echo "SCALINGO_DESTINATION_POSTGRESQL_URL is not set"
   exit 1
 fi
 
@@ -51,7 +51,7 @@ pg_dump --clean --if-exists \
 
 
 # Clean public schema of destination database
-psql "$SCALINGO_POSTGRESQL_URL_AS_PLUME" <<'EOSQL'
+psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 
@@ -68,7 +68,7 @@ pg_restore --section=pre-data \
   --clean --if-exists \
   --no-owner --no-privileges \
   --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
+  --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
 
 
@@ -76,14 +76,14 @@ pg_restore --section=data \
   --no-owner --no-privileges \
   --disable-triggers \
   --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
+  --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
 
 
 pg_restore --section=post-data \
   --no-owner --no-privileges \
   --verbose \
-  --dbname=$SCALINGO_POSTGRESQL_URL \
+  --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Process is complete"
