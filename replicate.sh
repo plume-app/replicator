@@ -25,18 +25,19 @@ then
 fi
 
 
+
 # Install packages
 install-scalingo-cli
 dbclient-fetcher psql
 
 
-# Login to scaling cli
+# Login to Scalingo CLI
 scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 
+# Dump original database with some tables excluded
 DUMP_NAME=/app/partial_dump.dump
 
-# Dump original database with some tables excluded
 pg_dump --clean --if-exists \
   --format=c \
   --verbose \
@@ -50,18 +51,25 @@ pg_dump --clean --if-exists \
   --file $DUMP_NAME
 
 
-# Clean public schema of destination database
+# Clean public schema and set default privileges
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
-
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO plume_app_d_8501;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO admin;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO admin_patroni;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO metabase;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgresql;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO replicator;
 EOSQL
+
+
+# Define roles in Bash array
+ROLES=("plume_app_d_8501" "admin" "admin_patroni" "metabase" "postgresql" "replicator")
+
+
+# Set schema usage, default privileges, and grants for future objects
+for role in "${ROLES[@]}"; do
+  psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
+    GRANT USAGE ON SCHEMA public TO $role;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $role;
+EOSQL
+done
+
 
 # Restore database into destination database
 pg_restore --section=pre-data \
@@ -71,7 +79,6 @@ pg_restore --section=pre-data \
   --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
 
-
 pg_restore --section=data \
   --no-owner --no-privileges \
   --disable-triggers \
@@ -79,11 +86,18 @@ pg_restore --section=data \
   --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
 
-
 pg_restore --section=post-data \
   --no-owner --no-privileges \
   --verbose \
   --dbname=$SCALINGO_DESTINATION_POSTGRESQL_URL \
   $DUMP_NAME
+
+
+# Grant privileges on all restored tables
+for role in "${ROLES[@]}"; do
+  psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO $role;
+EOSQL
+done
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Process is complete"
