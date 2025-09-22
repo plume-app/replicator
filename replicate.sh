@@ -24,15 +24,19 @@ then
   exit 1
 fi
 
-
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Env variables checked"
 
 # Install packages
 install-scalingo-cli
 dbclient-fetcher psql
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Packages installed"
+
 
 # Login to Scalingo CLI
 scalingo login --api-token $SCALINGO_CLI_TOKEN
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Logged in to Scalingo CLI"
 
 
 # Dump original database with some tables excluded
@@ -50,6 +54,7 @@ pg_dump --clean --if-exists \
   --exclude-table='public.versions' \
   --file $DUMP_NAME
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Original databse (partially) dumped"
 
 # Clean public schema and set default privileges
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
@@ -57,6 +62,7 @@ DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 EOSQL
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Destination database : public schema dropped and recreated"
 
 # Define roles in Bash array
 ROLES=("plume_app_d_8501" "admin" "admin_patroni" "metabase" "postgresql" "replicator")
@@ -70,6 +76,7 @@ for role in "${ROLES[@]}"; do
 EOSQL
 done
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - All privileges granted before restore"
 
 # Restore database into destination database
 pg_restore --section=pre-data \
@@ -93,6 +100,8 @@ pg_restore --section=post-data \
   $DUMP_NAME
 
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Restore is complete"
+
 # Grant privileges on all restored tables
 for role in "${ROLES[@]}"; do
   psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
@@ -100,4 +109,6 @@ for role in "${ROLES[@]}"; do
 EOSQL
 done
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Process is complete"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - All privileges granted after restore"
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Full process is complete"
