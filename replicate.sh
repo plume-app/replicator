@@ -65,11 +65,11 @@ EOSQL
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Destination database : public schema dropped and recreated"
 
 # Define roles in Bash array
-ROLES=("plume_app_d_8501" "admin" "admin_patroni" "metabase" "postgresql" "replicator")
+ROLES="plume_app_d_8501 admin admin_patroni metabase postgresql replicator"
 
 
 # Set schema usage, default privileges, and grants for future objects
-for role in "${ROLES[@]}"; do
+for role in $ROLES; do
   psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
     GRANT USAGE ON SCHEMA public TO $role;
     ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $role;
@@ -103,7 +103,7 @@ pg_restore --section=post-data \
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Restore is complete"
 
 # Grant privileges on all restored tables
-for role in "${ROLES[@]}"; do
+for role in $ROLES; do
   psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
     GRANT ALL ON ALL TABLES IN SCHEMA public TO $role;
 EOSQL
