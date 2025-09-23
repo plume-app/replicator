@@ -56,8 +56,6 @@ pg_dump --clean --if-exists \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Original database (partially) dumped"
 
-# INTRODUCTION ERROR
-pg_dump --file
 
 # Clean public schema and set default privileges
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
