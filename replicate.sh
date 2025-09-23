@@ -54,7 +54,7 @@ pg_dump --clean --if-exists \
   --exclude-table='public.versions' \
   --file $DUMP_NAME
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Original databse (partially) dumped"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Original database (partially) dumped"
 
 # Clean public schema and set default privileges
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<'EOSQL'
