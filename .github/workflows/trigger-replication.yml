@@ -1,0 +1,42 @@
+name: Database Replication
+
+on:
+  workflow_dispatch:   # allow manual trigger
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  replicate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Scalingo CLI
+        run: curl -sL https://cli-dl.scalingo.com/install | bash
+
+      - name: Login to Scalingo
+        run: scalingo login --api-token ${{ secrets.SCALINGO_CLI_TOKEN }}
+
+      - name: Run replication script on Scalingo
+        run: |
+          # overwrite log file each run
+          rm -f replicate.log
+
+          scalingo --app plume-app-data-replicate run 'sh /app/replicate.sh' 2>&1 | tee replicate.log
+        continue-on-error: true
+
+      - name: Check replication success
+        run: |
+          if ! tail -n 1 replicate.log | grep -q "Full process is complete"; then
+            echo "Error : Replication script did not finish successfully"
+            exit 1
+          fi
+
+      - name: Upload logs
+        if: always()   # Logs are uploaded even if check step fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: replicate-logs
+          path: replicate.log
