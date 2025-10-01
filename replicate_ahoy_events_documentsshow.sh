@@ -40,9 +40,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Logged in to Scalingo CLI"
 
 
 # Export query result from original database into a CSV file
-SQL_OUTPUT_FILE="/app/ahoy_documents_show.csv"
+CSV_OUTPUT_FILE="/app/ahoy_documents_show.csv"
 
-psql "$SCALINGO_ORIGINAL_POSTGRESQL_URL" <<EOSQL
+psql "$SCALINGO_ORIGINAL_POSTGRESQL_URL" > "$CSV_OUTPUT_FILE" 2>/dev/null <<EOSQL
 \set ON_ERROR_STOP on
 COPY (
   SELECT *
@@ -51,7 +51,7 @@ COPY (
     AND time >= '2023-01-01'
     AND properties ? 'id'
 ) TO STDOUT WITH CSV HEADER;
-EOSQL > "$SQL_OUTPUT_FILE"
+EOSQL
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Query on original database exported to CSV file"
 
@@ -83,7 +83,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Table 'analytics.ahoy_documents_show' creat
 # Load CSV into destination table
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
 BEGIN;
-\copy analytics.ahoy_documents_show FROM '$SQL_OUTPUT_FILE' WITH CSV HEADER;
+\copy analytics.ahoy_documents_show FROM '$CSV_OUTPUT_FILE' WITH CSV HEADER;
 COMMIT;
 EOSQL
 
