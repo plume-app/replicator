@@ -39,7 +39,8 @@ jobs:
           # overwrite log file each run
           rm -f transformation.log
 
-          scalingo --app plume-app-data-replicate run 'sh /app/transformation.sh' 2>&1 | tee transformation.log
+          # log file is "../transformation.log" since the working directory is "./transformer"
+          scalingo --app plume-app-data-replicate run 'sh /app/transformation.sh' 2>&1 | tee ../transformation.log
         working-directory: ./transformer
         continue-on-error: true
 
