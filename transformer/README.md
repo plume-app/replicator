@@ -14,3 +14,8 @@ It needs the following env vars (mainly used in the `transformer/profiles.yml` f
 
 As recommended by Scalingo, it uses `pipenv` (https://pypi.org/project/pipenv/) to set up the Python environnement as specified by the `Pipfile` and `Pipfile.lock` files.
 - note : The `Pipfile.lock` was simply generated once using the `pipenv lock` command.
+
+### Usage
+
+- Run `dbt debut` to check if everything is set correctly.
+- Run `dbt run` to run all available models in the `transformer/models` folder.
