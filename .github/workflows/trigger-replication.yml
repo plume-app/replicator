@@ -38,8 +38,7 @@ jobs:
         run: |
           # overwrite log file each run
           rm -f transformation.log
-          pipenv install --dev
-          pipenv run dbt run 2>&1 | tee transformation.log
+          dbt run 2>&1 | tee transformation.log
         working-directory: ./transformer
         continue-on-error: true
 
