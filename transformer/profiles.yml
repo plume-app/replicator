@@ -1,0 +1,13 @@
+dbt_plume_replicate: 
+  target: dev 
+  outputs:
+    dev:
+      type: postgres
+      user: "{{ env_var('DBT_POSTGRESQL_USER') }}"
+      pass: "{{ env_var('DBT_POSTGRESQL_PASSWORD') }}"
+      dbname: "{{ env_var('DBT_POSTGRESQL_DATABASE_NAME') }}"
+      host: "{{ env_var('DBT_POSTGRESQL_HOST') }}"
+      port: "{{ env_var('DBT_POSTGRESQL_PORT') | int }}"
+      sslmode: require
+      schema: analytics 
+      threads: 1
