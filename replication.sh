@@ -8,8 +8,9 @@ set -e
 # Check of env vars
 REQUIRED_ENV_VARS="SCALINGO_CLI_TOKEN SCALINGO_ORIGINAL_POSTGRESQL_URL SCALINGO_DESTINATION_POSTGRESQL_URL"
 
-for var in "${REQUIRED_ENV_VARS[@]}"; do
-  if [ -z "${!var}" ]; then
+for var in $REQUIRED_ENV_VARS; do
+  eval "value=\${$var}"
+  if [ -z "$value" ]; then
     echo "$var is not set"
     exit 1
   fi
