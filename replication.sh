@@ -6,25 +6,21 @@ set -e
 
 
 # Check of env vars
-if [ -z "$SCALINGO_CLI_TOKEN" ]
-then
-  echo "SCALINGO_CLI_TOKEN is not set"
-  exit 1
-fi
+REQUIRED_ENV_VARS=(
+  "SCALINGO_CLI_TOKEN"
+  "SCALINGO_ORIGINAL_POSTGRESQL_URL"
+  "SCALINGO_DESTINATION_POSTGRESQL_URL"
+)
 
-if [ -z "$SCALINGO_ORIGINAL_POSTGRESQL_URL" ]
-then
-  echo "SCALINGO_ORIGINAL_POSTGRESQL_URL is not set"
-  exit 1
-fi
-
-if [ -z "$SCALINGO_DESTINATION_POSTGRESQL_URL" ]
-then
-  echo "SCALINGO_DESTINATION_POSTGRESQL_URL is not set"
-  exit 1
-fi
+for var in "${REQUIRED_ENV_VARS[@]}"; do
+  if [ -z "${!var}" ]; then
+    echo "$var is not set"
+    exit 1
+  fi
+done
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Env variables checked"
+
 
 # Install packages
 install-scalingo-cli
@@ -112,4 +108,4 @@ done
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - All privileges granted after restore"
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Full process is complete"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Full replication process is complete"
