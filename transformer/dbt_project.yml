@@ -1,0 +1,15 @@
+name: 'plume_replicate_analytics'
+version: '1.0.0'
+
+profile: 'dbt_plume_replicate'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+clean-targets:       
+  - "target"
+
+models:
+  plume_replicate_analytics: # Reuse the project name to ensure that everything set by default is well applied.
+    +materialized: table 
