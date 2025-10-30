@@ -22,21 +22,46 @@ jobs:
       - name: Run replication script on Scalingo
         run: |
           # overwrite log file each run
-          rm -f replicate.log
+          rm -f replication.log
 
-          scalingo --app plume-app-data-replicate run 'sh /app/replicate.sh' 2>&1 | tee replicate.log
+          scalingo --app plume-app-data-replicate run 'sh /app/replicate.sh' 2>&1 | tee replication.log
         continue-on-error: true
 
       - name: Check replication success
         run: |
-          if ! tail -n 1 replicate.log | grep -q "Full process is complete"; then
+          if ! tail -n 1 replication.log | grep -q "Full process is complete"; then
             echo "Error : Replication script did not finish successfully"
             exit 1
+          fi
+
+      - name: Run dbt transformation
+        run: |
+          # overwrite log file each run
+          rm -f transformation.log
+          pipenv install --dev
+          pipenv run dbt run 2>&1 | tee transformation.log
+        working-directory: ./transformer
+        continue-on-error: true
+
+      - name: Check dbt transformation success
+        run: |
+          if ! grep -q "Completed successfully" transformation.log; then
+            echo "Error: dbt run did not complete successfully. See transformation.log for details."
+            exit 1
+          fi
+          if grep -q "ERROR=" transformation.log; then
+            ERRORS=$(grep -o "ERROR=[0-9]*" transformation.log | head -1)
+            if [[ "$ERRORS" != "ERROR=0" ]]; then
+              echo "Error: There were dbt model errors ($ERRORS)."
+              exit 1
+            fi
           fi
 
       - name: Upload logs
         if: always()   # Logs are uploaded even if check step fails
         uses: actions/upload-artifact@v4
         with:
-          name: replicate-logs
-          path: replicate.log
+          name: replication-and-transformation-logs
+          path: |
+            replication.log
+            transformation.log
