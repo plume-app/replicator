@@ -24,12 +24,12 @@ jobs:
           # overwrite log file each run
           rm -f replication.log
 
-          scalingo --app plume-app-data-replicate run 'sh /app/replicate.sh' 2>&1 | tee replication.log
+          scalingo --app plume-app-data-replicate run 'sh /app/replication.sh' 2>&1 | tee replication.log
         continue-on-error: true
 
       - name: Check replication success
         run: |
-          if ! tail -n 1 replication.log | grep -q "Full process is complete"; then
+          if ! tail -n 1 replication.log | grep -q "Full replication process is complete"; then
             echo "Error : Replication script did not finish successfully"
             exit 1
           fi
@@ -38,7 +38,8 @@ jobs:
         run: |
           # overwrite log file each run
           rm -f transformation.log
-          dbt run 2>&1 | tee transformation.log
+
+          scalingo --app plume-app-data-replicate run 'sh /app/transformation.sh' 2>&1 | tee transformation.log
         working-directory: ./transformer
         continue-on-error: true
 
