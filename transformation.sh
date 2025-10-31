@@ -22,4 +22,4 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Env variables checked"
 # Run dbt transformation
 dbt run
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Full transformationprocess is complete"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Full transformation process is complete"
