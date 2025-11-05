@@ -19,6 +19,8 @@ SELECT
     user_infos_2025_2026.expe_2025_2026,
     user_infos_2025_2026.provider = 'gar' AS gar,
     user_infos_2025_2026.user_tags ILIKE '%expé%' AS expe,
+    user_infos_2025_2026.user_tags ILIKE '%contest_les-petits-molieres-2025_interested%' AS lpm_interested_2026,
+    user_infos_2025_2026.user_tags ILIKE '%contest_les-petits-molieres-2025_registered%' AS lpm_registered_2026,
     COALESCE(user_infos_2025_2026.canceled, false) AS canceled,
     user_infos_2025_2026.cancel_reason,
     user_infos_2025_2026.students_writings_count_2025_2026,
@@ -53,6 +55,8 @@ SELECT
     END AS school_type_enhanced,
     user_infos_2025_2026.school_country,
     user_infos_2025_2026.school_academy,
+    {{ get_region_name(country="school_country", zipcode="school_zipcode") }} AS french_region_name,
+    {{ get_departement_name(country="school_country", zipcode="school_zipcode") }} AS french_department_name,
     user_infos_2025_2026.school_city,
     user_infos_2025_2026.school_zipcode,
     user_infos_2025_2026.school_street,
@@ -61,8 +65,6 @@ SELECT
     user_infos_2025_2026.gift_card_code,
     user_infos_2025_2026.gift_card_campaign_name,
     user_infos_2025_2026.stripe_payment,
-    -- user_infos_2025_2026.stripe_intent_id,
-    -- user_infos_2025_2026.stripe_subscription_id,
     user_infos_2025_2026.students_writings_count_2024_2025,
     user_infos_2025_2026.students_writings_count_2023_2024
 FROM user_infos_2025_2026
