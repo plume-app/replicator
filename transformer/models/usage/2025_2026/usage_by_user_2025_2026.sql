@@ -44,15 +44,7 @@ SELECT
     user_infos_2025_2026.school_name,
     user_infos_2025_2026.school_contract_type,
     user_infos_2025_2026.school_type,
-    CASE
-        WHEN user_infos_2025_2026.school_type = 'elementary' THEN 'elementary'
-        WHEN unaccent(lower(user_infos_2025_2026.school_name)) LIKE '%ecole primaire%' THEN 'elementary'
-        WHEN unaccent(lower(user_infos_2025_2026.school_name)) LIKE '%ecole elementaire%' THEN 'elementary'
-        WHEN user_infos_2025_2026.school_type = 'middle_school' THEN 'middle_school'
-        WHEN unaccent(lower(user_infos_2025_2026.school_name)) LIKE '%college%' THEN 'middle_school'
-        WHEN user_infos_2025_2026.school_type = 'high_school' THEN 'high_school'
-        ELSE user_infos_2025_2026.school_type
-    END AS school_type_enhanced,
+    {{ get_enhanced_school_type(school_type="user_infos_2025_2026.school_type", school_name="user_infos_2025_2026.school_name") }} AS school_type_enhanced,
     user_infos_2025_2026.school_country,
     user_infos_2025_2026.school_academy,
     {{ get_region_name(country="school_country", zipcode="school_zipcode") }} AS french_region_name,
