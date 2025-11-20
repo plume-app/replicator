@@ -89,6 +89,7 @@ SELECT
     schools.name AS school_name,
     schools.name || ' (id = ' || schools.id || ')' AS school_label,
     schools.kind AS school_type,
+    {{ get_enhanced_school_type(school_type="schools.kind", school_name="schools.name") }} AS school_type_enhanced,
     user_metrics_2024_2025_with_school_adress.tags,
     user_metrics_2024_2025_with_school_adress.provider,
     user_metrics_2024_2025_with_school_adress.hubspot_id,
