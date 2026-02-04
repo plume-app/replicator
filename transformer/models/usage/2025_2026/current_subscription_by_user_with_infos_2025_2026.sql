@@ -39,7 +39,8 @@ SELECT
     users.created_at AS user_creation_date,
     users.provider,
     users.tags AS user_tags,
-    users.account_type AS user_account_type
+    users.account_type AS user_account_type,
+    users.active AS user_active
 FROM user_metrics_2025_2026
 RIGHT JOIN users
 ON user_metrics_2025_2026.user_id = users.id
@@ -86,6 +87,7 @@ SELECT
     schools.name AS school_name,
     schools.name || ' (id = ' || schools.id || ')' AS school_label,
     schools.kind AS school_type,
+    schools.uai AS school_uai,
     user_metrics_2025_2026_with_school_adress.first_name,
     user_metrics_2025_2026_with_school_adress.last_name,
     user_metrics_2025_2026_with_school_adress.user_creation_date,
@@ -104,7 +106,8 @@ SELECT
     user_metrics_2025_2026_with_school_adress.user_tags ILIKE '%contest_les-petits-molieres-2025%' AS lpm_2025_2026,
     user_metrics_2025_2026_with_school_adress.user_tags ILIKE '%ambassadeur-25-26%' AS ambassadeur_2025_2026,
     user_metrics_2025_2026_with_school_adress.user_tags ILIKE '%expé-25-26%' AS expe_2025_2026,
-    user_metrics_2025_2026_with_school_adress.user_account_type
+    user_metrics_2025_2026_with_school_adress.user_account_type,
+    user_metrics_2025_2026_with_school_adress.user_active
 FROM user_metrics_2025_2026_with_school_adress
 LEFT JOIN schools 
 ON user_metrics_2025_2026_with_school_adress.school_id = schools.id
