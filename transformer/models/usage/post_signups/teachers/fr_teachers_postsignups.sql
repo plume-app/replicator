@@ -1,0 +1,18 @@
+{{ config(
+   materialized="view"
+) }}
+
+WITH teachers_signup AS (
+SELECT 
+    user_id,
+    gar,
+    user_creation_date,
+    user_active
+FROM {{ ref('usage_by_user_2025_2026') }} 
+WHERE 
+    user_creation_date >= '2024-09-01'
+    AND 
+    user_account_type = 1
+)
+
+SELECT * FROM teachers_signup
