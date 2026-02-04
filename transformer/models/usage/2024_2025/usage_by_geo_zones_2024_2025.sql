@@ -37,7 +37,8 @@ SELECT
     users.created_at AS user_creation_date,
     users.provider,
     users.tags AS user_tags,
-    users.account_type AS user_account_type
+    users.account_type AS user_account_type,
+    users.active AS user_active
 FROM user_metrics_2024_2025
 LEFT JOIN users
 ON user_metrics_2024_2025.user_id = users.id
@@ -90,11 +91,13 @@ SELECT
     schools.name || ' (id = ' || schools.id || ')' AS school_label,
     schools.kind AS school_type,
     {{ get_enhanced_school_type(school_type="schools.kind", school_name="schools.name") }} AS school_type_enhanced,
+    schools.uai AS school_uai,
     user_metrics_2024_2025_with_school_adress.tags,
     user_metrics_2024_2025_with_school_adress.provider,
     user_metrics_2024_2025_with_school_adress.hubspot_id,
     user_metrics_2024_2025_with_school_adress.user_tags,
-    user_metrics_2024_2025_with_school_adress.user_account_type
+    user_metrics_2024_2025_with_school_adress.user_account_type,
+    user_metrics_2024_2025_with_school_adress.user_active
 FROM user_metrics_2024_2025_with_school_adress
 LEFT JOIN schools 
 ON user_metrics_2024_2025_with_school_adress.school_id = schools.id
