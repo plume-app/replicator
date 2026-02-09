@@ -9,6 +9,8 @@ SELECT
     user_classrooms.created_at AS classroom_creation_date
 FROM {{ ref('fr_teachers_postsignups') }} AS signups_teachers
 LEFT JOIN user_classrooms ON signups_teachers.user_id = user_classrooms.user_id
+LEFT JOIN classrooms ON user_classrooms.classroom_id = classrooms.id
+WHERE classrooms.demo = false
 ),
 
 signups_teachers_classrooms_kids AS (
