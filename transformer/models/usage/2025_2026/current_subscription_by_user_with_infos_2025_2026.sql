@@ -40,7 +40,8 @@ SELECT
     users.provider,
     users.tags AS user_tags,
     users.account_type AS user_account_type,
-    users.active AS user_active
+    users.active AS user_active,
+    users.locale AS user_locale
 FROM user_metrics_2025_2026
 RIGHT JOIN users
 ON user_metrics_2025_2026.user_id = users.id
@@ -107,7 +108,8 @@ SELECT
     user_metrics_2025_2026_with_school_adress.user_tags ILIKE '%ambassadeur-25-26%' AS ambassadeur_2025_2026,
     user_metrics_2025_2026_with_school_adress.user_tags ILIKE '%expé-25-26%' AS expe_2025_2026,
     user_metrics_2025_2026_with_school_adress.user_account_type,
-    user_metrics_2025_2026_with_school_adress.user_active
+    user_metrics_2025_2026_with_school_adress.user_active,
+    user_metrics_2025_2026_with_school_adress.user_locale
 FROM user_metrics_2025_2026_with_school_adress
 LEFT JOIN schools 
 ON user_metrics_2025_2026_with_school_adress.school_id = schools.id

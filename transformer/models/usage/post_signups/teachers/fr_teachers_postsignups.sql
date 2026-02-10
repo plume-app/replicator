@@ -13,6 +13,8 @@ WHERE
     user_creation_date >= '2024-09-01'
     AND 
     user_account_type = 1
+    AND 
+    user_locale = 'fr'
 )
 
 SELECT * FROM teachers_signup
