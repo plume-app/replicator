@@ -5,6 +5,7 @@ WITH user_infos_2025_2026 AS (
 user_infos_2025_2026_formatted AS (
 SELECT 
     user_infos_2025_2026.user_id,
+    user_infos_2025_2026.user_locale,
     user_infos_2025_2026.first_name,
     user_infos_2025_2026.last_name,
     user_infos_2025_2026.email,
