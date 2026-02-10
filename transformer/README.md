@@ -19,4 +19,5 @@ As recommended by Scalingo, it uses `pipenv` (https://pypi.org/project/pipenv/) 
 
 - Run `dbt debut` to check if everything is set correctly.
 - Run `dbt run` to run all available models in the `transformer/models` folder.
-  - Run a specific subfolder with `dbt run --select path:PATH` (e.g. `dbt run --select path:models/usage` to run all models contained in the `transformer/models/usage` folder, along with their dependencies).
+  - Run a specific subfolder with `dbt run --select path:PATH`
+    - _e.g._ `dbt run --select path:models/usage` to run all models contained in the `transformer/models/usage` folder. **Warning** : it does **NOT** run their dependencies.
