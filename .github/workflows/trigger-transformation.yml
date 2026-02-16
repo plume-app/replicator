@@ -1,4 +1,4 @@
-name: Database Replication and Transformation
+name: Data Transformation
 
 on:
   workflow_dispatch:   # allow manual trigger
