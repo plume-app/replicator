@@ -10,7 +10,7 @@ SELECT
 FROM {{ ref('fr_teachers_postsignups') }} AS signups_teachers
 LEFT JOIN user_classrooms ON signups_teachers.user_id = user_classrooms.user_id
 LEFT JOIN classrooms ON user_classrooms.classroom_id = classrooms.id
-WHERE classrooms.demo = false
+WHERE classrooms.demo IS NOT TRUE
 ),
 
 signups_teachers_classrooms_kids AS (
@@ -22,6 +22,7 @@ SELECT
 FROM signups_teachers_classrooms
 LEFT JOIN kid_classrooms ON signups_teachers_classrooms.classroom_id = kid_classrooms.classroom_id
 LEFT JOIN kids ON kid_classrooms.kid_id = kids.id
+WHERE kids.demo IS NOT TRUE
 ),
 
 signups_teachers_writings AS (

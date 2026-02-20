@@ -12,10 +12,12 @@ filtered_users as (
 ), filtered_kids as (
     SELECT kids.id as kid_id, fu.user_id as user_id
     FROM kids
-    JOIN kid_classrooms ON kid_classrooms.kid_id = kids.id 
+    JOIN kid_classrooms ON kid_classrooms.kid_id = kids.id
+    JOIN classrooms ON kid_classrooms.classroom_id = classrooms.id AND classrooms.demo IS NOT TRUE
     JOIN user_classrooms ON user_classrooms.classroom_id = kid_classrooms.classroom_id
     JOIN filtered_users fu ON fu.user_id = user_classrooms.user_id
     WHERE kids.student = true
+    AND kids.demo IS NOT TRUE
 ),wrt as (
     SELECT writings.created_at, writings.kid_id, fk.user_id
     FROM writings

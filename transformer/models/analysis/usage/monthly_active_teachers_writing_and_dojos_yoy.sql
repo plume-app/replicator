@@ -5,7 +5,7 @@ WITH combined_activity AS (
       writings.created_at
    FROM "public"."writings"
    JOIN kids ON kid_id = kids.id
-   WHERE kids.student = 'true' AND kids.demo = 'false'
+   WHERE kids.student = 'true' AND kids.demo IS NOT TRUE
 
    UNION
 
@@ -15,7 +15,7 @@ WITH combined_activity AS (
       "dojos_kid_games"."created_at"
    FROM "dojos_kid_games"
    JOIN kids ON "dojos_kid_games".kid_id = kids.id
-   WHERE kids.student = 'true' AND kids.demo = 'false'
+   WHERE kids.student = 'true' AND kids.demo IS NOT TRUE
 ),
 
 teacher_activity AS (
@@ -24,6 +24,7 @@ teacher_activity AS (
         "combined_activity"."created_at"
     FROM combined_activity
     JOIN "kid_classrooms" ON "combined_activity"."kid_id" = "kid_classrooms"."kid_id"
+    JOIN "classrooms" ON "kid_classrooms"."classroom_id" = "classrooms"."id" AND "classrooms"."demo" IS NOT TRUE
     JOIN "user_classrooms" ON "kid_classrooms"."classroom_id" = "user_classrooms"."classroom_id"
 )
 

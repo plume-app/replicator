@@ -19,7 +19,7 @@ FROM (
    SELECT kid_id, writings.id, writings.created_at, CAST(extract(year from "public"."writings"."created_at") AS integer) AS "year" 
    FROM "public"."writings"
    JOIN kids ON kid_id = kids.id
-   WHERE kids.student = 'true' AND kids.demo = 'false'
+   WHERE kids.student = 'true' AND kids.demo IS NOT TRUE
    
 ) "source"
     

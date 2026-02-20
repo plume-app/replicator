@@ -7,7 +7,7 @@ FROM
 LEFT JOIN "public"."kids" AS "Kids" ON "public"."writings"."kid_id" = "Kids"."id"
 WHERE
   ("Kids"."student" = TRUE)
- 
+  AND ("Kids"."demo" IS NOT TRUE)
    AND (
     "public"."writings"."created_at" >= timestamp '2024-08-27 00:00:00.000'
   )
