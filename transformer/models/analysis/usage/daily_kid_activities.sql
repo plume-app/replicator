@@ -15,6 +15,7 @@ SELECT * FROM (
         LEFT JOIN "public"."stories" "Stories" ON "public"."writings"."story_id" = "Stories"."id"
         LEFT JOIN "public"."universes" "Universes" ON "Stories"."universe_id" = "Universes"."id"
         LEFT JOIN "public"."kids" "Kids" ON "public"."writings"."kid_id" = "Kids"."id"
+        WHERE "Kids"."demo" IS NOT TRUE
     ) "source"
     WHERE (
         "source"."created_at" >= date_trunc('day', CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS timestamp))
@@ -31,6 +32,7 @@ SELECT * FROM (
             "Kids"."student" AS "Kids__student"
         FROM "public"."kid_daily_words"
         LEFT JOIN "public"."kids" "Kids" ON "public"."kid_daily_words"."kid_id" = "Kids"."id"
+        WHERE "Kids"."demo" IS NOT TRUE
     ) "source2"
     WHERE (
         "source2"."created_at" >= date_trunc('day', CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS timestamp))
@@ -47,6 +49,7 @@ SELECT * FROM (
             "Kids"."student" AS "Kids__student"
         FROM "public"."dojos_kid_games"
         LEFT JOIN "public"."kids" "Kids" ON "public"."dojos_kid_games"."kid_id" = "Kids"."id"
+        WHERE "Kids"."demo" IS NOT TRUE
     ) "source3"
     WHERE (
         "source3"."created_at" >= date_trunc('day', CAST((CAST(now() AS timestamp) + (INTERVAL '-30 day')) AS timestamp))

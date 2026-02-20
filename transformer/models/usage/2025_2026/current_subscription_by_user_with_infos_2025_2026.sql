@@ -222,6 +222,7 @@ SELECT
 FROM user_classrooms uc
 JOIN classrooms c
     ON uc.classroom_id = c.id
+    AND c.demo IS NOT TRUE
 WHERE uc.created_at >= '2025-08-15'
 GROUP BY uc.user_id
 ),
