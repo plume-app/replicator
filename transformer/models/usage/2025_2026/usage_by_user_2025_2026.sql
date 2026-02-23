@@ -9,6 +9,7 @@ SELECT
     user_infos_2025_2026.first_name,
     user_infos_2025_2026.last_name,
     user_infos_2025_2026.email,
+    user_infos_2025_2026.contact_email,
     user_infos_2025_2026.phone,
     user_infos_2025_2026.cycles,
     user_infos_2025_2026.classrooms_names,
