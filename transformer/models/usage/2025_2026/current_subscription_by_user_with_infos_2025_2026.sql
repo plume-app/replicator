@@ -11,6 +11,7 @@ SELECT
     visits,
     classrooms_created_count,
     students_created_count,
+    student_dojo_activities_count,
     cycles,
     tags,
     premium_subscription AS premium
@@ -27,6 +28,7 @@ SELECT
     COALESCE(user_metrics_2025_2026.visits, 0) AS visits,
     COALESCE(user_metrics_2025_2026.classrooms_created_count, 0) AS classrooms_created_count,
     COALESCE(user_metrics_2025_2026.students_created_count, 0) AS students_created_count,
+    COALESCE(user_metrics_2025_2026.student_dojo_activities_count, 0) AS student_dojo_activities_count,
     user_metrics_2025_2026.cycles,
     user_metrics_2025_2026.tags,
     user_metrics_2025_2026.premium,
@@ -79,6 +81,7 @@ SELECT
     user_metrics_2025_2026_with_school_adress.visits AS visits_2025_2026,
     user_metrics_2025_2026_with_school_adress.classrooms_created_count AS classrooms_created_count_2025_2026,
     user_metrics_2025_2026_with_school_adress.students_created_count AS students_created_count_2025_2026,
+    user_metrics_2025_2026_with_school_adress.student_dojo_activities_count AS student_dojo_activities_count_2025_2026,
     user_metrics_2025_2026_with_school_adress.school_id,
     schools.contract_type AS school_contract_type,
     user_metrics_2025_2026_with_school_adress.country AS school_country,

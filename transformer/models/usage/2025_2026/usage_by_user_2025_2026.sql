@@ -31,6 +31,7 @@ SELECT
     user_infos_2025_2026.visits_2025_2026,
     user_infos_2025_2026.classrooms_created_count_2025_2026,
     user_infos_2025_2026.students_created_count_2025_2026,
+    user_infos_2025_2026.student_dojo_activities_count_2025_2026,
     user_infos_2025_2026.user_creation_date,
     user_infos_2025_2026.user_account_type,
     user_infos_2025_2026.tags,
