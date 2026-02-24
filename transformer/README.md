@@ -28,8 +28,8 @@ As recommended by Scalingo, it uses `pipenv` (https://pypi.org/project/pipenv/) 
     - 🔴 Models located in the `transformer/one_shot_analysis` folder can be run whenever needed with `dbt run --select +path:models/one_shot_analysis`.
       - They are also [excluded](https://docs.getdbt.com/reference/node-selection/exclude) for the scheduled run in the `transformation.sh` file with `dbt run --exclude path:models/one_shot_analysis`.
   - **`incremental models`**
-    - Models under `models/post_signups/teachers` are **incremental** to limit heavy joins and aggregations. There is a **60-day window** applied in the incremental models.
-    - **Full refresh (one-time or backfill) :** builds all teacher signup usage from `2024-09-01`.  
-      `dbt run --full-refresh --select +path:models/post_signups/teachers`
-    - **Incremental (e.g. daily run) :** recomputes only signups in the **last 60 days** and replace their rows in the tables (delete+insert by `user_id`).  
-      `dbt run --select +path:models/post_signups/teachers`
+    - Some models are in **incremental** model.
+      - Most models in `models/post_signups/teachers` folder : there is a **60-day window** applied in the incremental models.
+      - `transformer/models/first_visit_device.sql` model.
+    - **Full refresh (one-time or backfill)** with the `--full-refresh` option (_e.g._ `dbt run --full-refresh --select +path:models/post_signups/teachers`)  
+    - **Incremental (e.g. standard daily run)** with `dbt run --select +path:models/post_signups/teachers`.
