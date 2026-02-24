@@ -1,5 +1,7 @@
 {{ config(
-   materialized="table"
+    materialized="incremental",
+    unique_key="user_id",
+    incremental_strategy="delete+insert"
 ) }}
 
 WITH signups_teachers_classrooms AS (
@@ -11,6 +13,9 @@ FROM {{ ref('fr_teachers_postsignups') }} AS signups_teachers
 LEFT JOIN user_classrooms ON signups_teachers.user_id = user_classrooms.user_id
 LEFT JOIN classrooms ON user_classrooms.classroom_id = classrooms.id
 WHERE classrooms.demo IS NOT TRUE
+{% if is_incremental() %}
+    AND signups_teachers.user_creation_date >= current_date - interval '60 days'
+{% endif %}
 ),
 
 signups_teachers_classrooms_kids AS (
