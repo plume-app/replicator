@@ -1,7 +1,20 @@
+{{ config(
+    materialized="incremental",
+    unique_key="user_id",
+    incremental_strategy="delete+insert"
+) }}
+
 -- Final model: joins only (no scan of the big writings table).
 {% set classroom_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set kid_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set writing_days = [1, 3, 7, 14, 21, 30, 60] %}
+
+WITH teachers_for_run AS (
+    SELECT * FROM {{ ref('fr_teachers_postsignups') }}
+    {% if is_incremental() %}
+    WHERE user_creation_date >= current_date - interval '60 days'
+    {% endif %}
+)
 
 SELECT
     u.user_id,
@@ -23,5 +36,5 @@ SELECT
     COALESCE(w.writings_d{{ days }}, 0) AS writings_d{{ days }}{% if not loop.last %},{% endif %}
     {% endfor -%}
 
-FROM {{ ref('fr_teachers_postsignups') }} AS u
+FROM teachers_for_run AS u
 LEFT JOIN {{ ref('fr_teachers_usage_within_windows') }} w ON u.user_id = w.user_id
