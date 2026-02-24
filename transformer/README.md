@@ -18,6 +18,12 @@ As recommended by Scalingo, it uses `pipenv` (https://pypi.org/project/pipenv/) 
 ### Usage
 
 - Run `dbt debut` to check if everything is set correctly.
-- Run `dbt run` to run all available models in the `transformer/models` folder.
-  - Run a specific subfolder with `dbt run --select path:PATH`
-    - _e.g._ `dbt run --select path:models/usage` to run all models contained in the `transformer/models/usage` folder. **Warning** : it does **NOT** run their dependencies.
+- **`models`**
+  - Run `dbt run` to run all available models in the `transformer/models` folder.
+    - Run a specific subfolder with `dbt run --select path:PATH`
+      - _e.g._ `dbt run --select +path:models/usage` to run all models contained in the `transformer/models/usage` folder . The [`+` operator](https://docs.getdbt.com/reference/node-selection/graph-operators#the-plus-operator) is needed to run all models dependencies (ancestors).
+- **`one-shot analysis`**
+  - One-shot models are located in the `transformer/models/one_shot_analysis` folder.
+    - ⚠️ `dbt` has a [partially similar `analyses` system](https://docs.getdbt.com/docs/build/analyses). But it does not allow inner dependencies for `analyses` files.
+  - Models located in the `transformer/one_shot_analysis` folder can be run whenever needed with `dbt run --select +path:models/one_shot_analysis`.
+    - They are also [excluded](https://docs.getdbt.com/reference/node-selection/exclude) for the scheduled run in the `transformation.sh` file with `dbt run --exclude path:models/one_shot_analysis`.
