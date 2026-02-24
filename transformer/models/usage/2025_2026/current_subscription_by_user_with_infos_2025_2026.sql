@@ -264,13 +264,17 @@ LEFT JOIN user_metrics AS user_metrics_2023_2024
    AND user_metrics_2023_2024.school_year = '2023_2024'
 ),
 
-infos_users_2025_2026_with_first_visit_device AS (
+infos_users_2025_2026_additional_infos AS (
 SELECT 
     infos_users_2025_2026_previous_years_infos.*,
-    first_visit_device.device_type AS device_type_first_visit
+    first_visit_device.device_type AS device_type_first_visit,
+    users_quests_points.quests_points_total,
+    users_quests_points.quests_points_category
 FROM infos_users_2025_2026_previous_years_infos
 LEFT JOIN {{ ref('first_visit_device') }} AS first_visit_device
     ON infos_users_2025_2026_previous_years_infos.user_id = first_visit_device.user_id
+LEFT JOIN {{ ref('users_quests_points') }} AS users_quests_points
+    ON infos_users_2025_2026_previous_years_infos.user_id = users_quests_points.user_id
 )
 
-SELECT * FROM infos_users_2025_2026_with_first_visit_device
+SELECT * FROM infos_users_2025_2026_additional_infos

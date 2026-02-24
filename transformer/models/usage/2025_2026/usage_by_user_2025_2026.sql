@@ -14,6 +14,8 @@ SELECT
     user_infos_2025_2026.cycles,
     user_infos_2025_2026.classrooms_names,
     user_infos_2025_2026.premium,
+    user_infos_2025_2026.quests_points_total,
+    user_infos_2025_2026.quests_points_category,
     user_infos_2025_2026.user_active,
     COALESCE(user_infos_2025_2026.payer, false) AS payer_2025_2026,
     user_infos_2025_2026.lpm_2024_2025,
