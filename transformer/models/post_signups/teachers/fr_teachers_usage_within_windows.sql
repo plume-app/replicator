@@ -5,7 +5,7 @@
     post_hook="ANALYZE {{ this }}"
 ) }}
 
--- Usage counts within day windows. One row per (user_id, user_creation_date).
+-- Usage counts within day windows. One row per user_id. user_creation_date comes from the join in fr_teachers_usage_postsignup.
 WITH base AS (
     SELECT *
     FROM {{ ref('fr_teachers_postsignups_classrooms_kids_writings') }}
@@ -14,16 +14,16 @@ WITH base AS (
 {% set classroom_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set kid_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set writing_days = [1, 3, 7, 14, 21, 30, 60] %}
+{% set quest_days = [1, 3, 7, 14, 21, 30, 60] %}
 
 usage_within_windows AS (
     SELECT
         b.user_id,
-        b.user_creation_date,
 
         -- Classrooms
         {% for days in classroom_days -%}
         COUNT(DISTINCT classroom_id) FILTER (
-            WHERE classroom_creation_date <= user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
+            WHERE classroom_creation_date <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
         ) AS classrooms_d{{ days }}{% if not loop.last %},{% endif %}
         {% endfor -%}
         ,
@@ -31,7 +31,7 @@ usage_within_windows AS (
         -- Kids
         {% for days in kid_days -%}
         COUNT(DISTINCT kid_id) FILTER (
-            WHERE kid_creation_date <= user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
+            WHERE kid_creation_date <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
         ) AS kids_d{{ days }}{% if not loop.last %},{% endif %}
         {% endfor -%}
         ,
@@ -39,12 +39,21 @@ usage_within_windows AS (
         -- Writings
         {% for days in writing_days -%}
         COUNT(DISTINCT writing_id) FILTER (
-            WHERE writing_creation_date <= user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
+            WHERE writing_creation_date <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
         ) AS writings_d{{ days }}{% if not loop.last %},{% endif %}
+        {% endfor -%}
+        ,
+
+        -- Quests completed
+        {% for days in quest_days -%}
+        COUNT(DISTINCT qc.id) FILTER (
+            WHERE qc.created_at <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
+        ) AS completed_quests_d{{ days }}{% if not loop.last %},{% endif %}
         {% endfor %}
 
     FROM base b
-    GROUP BY b.user_id, b.user_creation_date
+    LEFT JOIN quests_completions qc ON b.user_id = qc.user_id
+    GROUP BY b.user_id
 )
 
 SELECT * FROM usage_within_windows

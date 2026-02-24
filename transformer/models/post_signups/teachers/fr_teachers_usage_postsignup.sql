@@ -8,6 +8,7 @@
 {% set classroom_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set kid_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set writing_days = [1, 3, 7, 14, 21, 30, 60] %}
+{% set quest_days = [1, 3, 7, 14, 21, 30, 60] %}
 
 WITH teachers_for_run AS (
     SELECT * FROM {{ ref('fr_teachers_postsignups') }}
@@ -21,7 +22,10 @@ SELECT
     u.user_creation_date,
     u.gar,
     u.user_active,
-    
+    u.device_type_first_visit,
+    u.quests_points_total,
+    u.quests_points_category,
+
     {% for days in classroom_days -%}
     COALESCE(w.classrooms_d{{ days }}, 0) AS classrooms_d{{ days }}{% if not loop.last %},{% endif %}
     {% endfor -%}
@@ -34,6 +38,11 @@ SELECT
 
     {% for days in writing_days -%}
     COALESCE(w.writings_d{{ days }}, 0) AS writings_d{{ days }}{% if not loop.last %},{% endif %}
+    {% endfor -%}
+    ,
+
+    {% for days in quest_days -%}
+    COALESCE(w.completed_quests_d{{ days }}, 0) AS completed_quests_d{{ days }}{% if not loop.last %},{% endif %}
     {% endfor -%}
 
 FROM teachers_for_run AS u
