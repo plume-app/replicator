@@ -14,6 +14,7 @@ WITH base AS (
 {% set classroom_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set kid_days = [1, 3, 7, 14, 21, 30, 60] %}
 {% set writing_days = [1, 3, 7, 14, 21, 30, 60] %}
+{% set quest_days = [1, 3, 7, 14, 21, 30, 60] %}
 
 usage_within_windows AS (
     SELECT
@@ -40,9 +41,18 @@ usage_within_windows AS (
         COUNT(DISTINCT writing_id) FILTER (
             WHERE writing_creation_date <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
         ) AS writings_d{{ days }}{% if not loop.last %},{% endif %}
+        {% endfor -%}
+        ,
+
+        -- Quests completed
+        {% for days in quest_days -%}
+        COUNT(DISTINCT qc.id) FILTER (
+            WHERE qc.created_at <= b.user_creation_date + INTERVAL '{{ days }} day{% if days > 1 %}s{% endif %}'
+        ) AS completed_quests_d{{ days }}{% if not loop.last %},{% endif %}
         {% endfor %}
 
     FROM base b
+    LEFT JOIN quests_completions qc ON b.user_id = qc.user_id
     GROUP BY b.user_id
 )
 
