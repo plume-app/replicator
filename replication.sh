@@ -42,7 +42,7 @@ pg_dump --clean --if-exists \
   --no-owner --no-privileges --no-comments \
   --exclude-schema 'information_schema' \
   --exclude-schema '^pg_*' \
-  --exclude-table='public.ahoy*' \
+  --exclude-table='public.ahoy_events' \
   --exclude-table='public.solid_queue*' \
   --exclude-table='public.versions' \
   --file $DUMP_NAME
