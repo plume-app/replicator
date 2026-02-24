@@ -19,7 +19,7 @@ done
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Env variables checked"
 
 
-# Run dbt transformation
-dbt run
+# Run dbt transformation (one-shot analysis models are excluded)
+dbt run --exclude path:models/one_shot_analysis
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Full transformation process is complete"
