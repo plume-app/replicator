@@ -34,6 +34,20 @@ jobs:
             exit 1
           fi
 
+      - name: Run ahoy_events documentsshow replication on Scalingo
+        run: |
+          rm -f replication-documentsshow.log
+
+          scalingo --app plume-app-data-replicate run 'sh /app/temporary_replicators/replicate_ahoy_events_documentsshow.sh' 2>&1 | tee replication-documentsshow.log
+        continue-on-error: true
+
+      - name: Check ahoy_events documentsshow replication success
+        run: |
+          if ! tail -n 1 replication-documentsshow.log | grep -q "Full process is complete"; then
+            echo "Error : ahoy_events documentsshow replication did not finish successfully"
+            exit 1
+          fi
+
       - name: Upload logs
         if: always()   # Logs are uploaded even if check step fails
         uses: actions/upload-artifact@v4
@@ -41,3 +55,4 @@ jobs:
           name: replication-logs
           path: |
             replication.log
+            replication-documentsshow.log
