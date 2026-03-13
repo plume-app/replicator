@@ -31,11 +31,10 @@ scalingo login --api-token $SCALINGO_CLI_TOKEN
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Logged in to Scalingo CLI"
 
-pg_dump --version
-pg_restore --version
-psql "$SCALINGO_ORIGINAL_POSTGRESQL_URL" -Atc "show server_version;"
-psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" -Atc "show server_version;"
-
+echo "pg_dump version: $(pg_dump --version)"
+echo "pg_restore version: $(pg_restore --version)"
+echo "source DB version: $(psql "$SCALINGO_ORIGINAL_POSTGRESQL_URL" -Atc 'show server_version;')"
+echo "destination DB version: $(psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" -Atc 'show server_version;')"
 # Dump original database with some tables excluded
 DUMP_NAME=/app/partial_dump.dump
 
