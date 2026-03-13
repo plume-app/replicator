@@ -21,9 +21,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Env variables checked"
 
 # Install packages
 install-scalingo-cli
-dbclient-fetcher psql
+# Install PostgreSQL 16 client tools (psql, pg_dump, pg_restore, ...)
+dbclient-fetcher pgsql 16
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') - Packages installed"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Packages installed (PostgreSQL CLI 16)"
 
 
 # Login to Scalingo CLI
