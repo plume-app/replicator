@@ -49,7 +49,6 @@ pg_dump --clean --if-exists \
   --exclude-table='public.ahoy_events' \
   --exclude-table='public.solid_queue*' \
   --exclude-table='public.versions' \
-  --exclude-table='public.activity_embeddings' \
   --file $DUMP_NAME
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Original database (partially) dumped"
