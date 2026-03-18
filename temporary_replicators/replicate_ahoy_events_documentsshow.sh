@@ -67,7 +67,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Schema 'analytics' ensured in destination d
 # Create empty table in destination database (matching CSV columns)
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
 CREATE TABLE IF NOT EXISTS analytics.ahoy_documents_show (
-  id bigint, 
+  id bigint PRIMARY KEY,
   visit_id bigint, 
   user_id bigint, 
   name character varying, 
@@ -80,9 +80,12 @@ EOSQL
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Table 'analytics.ahoy_documents_show' created in destination database"
 
 
-# Load CSV into destination table
+# Load CSV into destination table and ensure the destination table doesn't accumulate duplicates on re-runs (with TRUNCATE)
 psql "$SCALINGO_DESTINATION_POSTGRESQL_URL" <<EOSQL
 BEGIN;
+TRUNCATE TABLE analytics.ahoy_documents_show;
+CREATE UNIQUE INDEX IF NOT EXISTS ahoy_documents_show_id_unique
+  ON analytics.ahoy_documents_show (id);
 \copy analytics.ahoy_documents_show FROM '$CSV_OUTPUT_FILE' WITH CSV HEADER;
 COMMIT;
 EOSQL
